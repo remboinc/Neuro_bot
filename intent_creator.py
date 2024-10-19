@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def create_intent(project_id, gcloud_access_token):
+def create_intent(id, token):
     headers = {
-        'Authorization': f'Bearer {gcloud_access_token}',
-        'x-goog-user-project': project_id,
+        'Authorization': f'Bearer {token}',
+        'x-goog-user-project': id,
         'Content-Type': 'application/json; charset=utf-8',
     }
     with open("questions.json", "r", encoding='utf-8') as file:
@@ -47,4 +47,4 @@ def create_intent(project_id, gcloud_access_token):
 if __name__ == '__main__':
     project_id = os.getenv('PROJECT_ID')
     gcloud_access_token = os.getenv("GCLOUD_ACCESS_TOKEN")
-    create_intent()
+    create_intent(project_id, gcloud_access_token)
