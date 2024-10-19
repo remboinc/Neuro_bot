@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def create_intent(id, token):
+def create_intent(project_id, token):
     headers = {
         'Authorization': f'Bearer {token}',
-        'x-goog-user-project': id,
+        'x-goog-user-project': project_id,
         'Content-Type': 'application/json; charset=utf-8',
     }
     with open("questions.json", "r", encoding='utf-8') as file:
@@ -38,6 +38,7 @@ def create_intent(id, token):
             headers=headers
         )
         response.raise_for_status()
+
         if response.status_code == 200:
             print(f"Интент '{intent_name}' успешно создан.")
         else:
