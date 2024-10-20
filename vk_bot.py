@@ -8,10 +8,6 @@ from dotenv import load_dotenv
 from vk_api.longpoll import VkLongPoll, VkEventType
 from google.cloud import dialogflow
 
-load_dotenv()
-
-logging.basicConfig(level=logging.INFO)
-
 
 def message_sender(event, message, vk_api):
     logging.info(f"Отправка сообщения пользователю {event.user_id}: {message}")
@@ -28,8 +24,6 @@ def detect_intent_from_dialogflow(project_id, session_id, text, language_code):
 
     try:
         session = session_client.session_path(project_id, session_id)
-        logging.info(session)
-
         text_input = dialogflow.TextInput(text=text, language_code=language_code)
         query_input = dialogflow.QueryInput(text=text_input)
         response = session_client.detect_intent(
@@ -51,6 +45,8 @@ def detect_intent_from_dialogflow(project_id, session_id, text, language_code):
 
 
 if __name__ == "__main__":
+    load_dotenv()
+    logging.basicConfig(level=logging.INFO)
 
     project_id = os.getenv('PROJECT_ID')
     vk_session = vk.VkApi(token=os.getenv("VK_APP_TOKEN"))
