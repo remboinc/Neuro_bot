@@ -22,3 +22,7 @@ VK_APP_TOKEN='токен вашей группы ВК'
 
 Как получить PROJECT_ID от https://dialogflow.cloud.google.com
 Читайте в официальной документации
+
+Примеры ботов:
+TG: @Neuro_for_people_bot
+VK: club227921191
