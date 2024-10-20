@@ -12,6 +12,16 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 
+def get_dialogflow_headers(project_id):
+    gcloud_access_token = os.getenv("GCLOUD_ACCESS_TOKEN")
+
+    headers = {
+        'Authorization': 'Bearer ' + gcloud_access_token,
+        'x-goog-user-project': project_id,
+        'Content-Type': 'application/json; charset=utf-8',
+    }
+    return headers
+
 def echo(event, message, vk_api):
     logging.info(f"Отправка сообщения пользователю {event.user_id}: {message}")
     vk_api.messages.send(
@@ -21,19 +31,10 @@ def echo(event, message, vk_api):
     )
 
 
-def detect_intent_from_dialogflow(text, session_id):
-    project_id = os.getenv('PROJECT_ID')
-    gcloud_access_token = os.getenv("GCLOUD_ACCESS_TOKEN")
-
+def detect_intent_from_dialogflow(text, session_id, headers):
     logging.info(f"Запрос к Dialogflow: text='{text}', session_id='{session_id}'")
 
     url = f"https://dialogflow.googleapis.com/v2/projects/{project_id}/agent/sessions/{session_id}:detectIntent"
-
-    headers = {
-        'Authorization': 'Bearer ' + gcloud_access_token,
-        'x-goog-user-project': project_id,
-        'Content-Type': 'application/json; charset=utf-8',
-    }
 
     data = {
         "queryInput": {
@@ -65,6 +66,8 @@ def detect_intent_from_dialogflow(text, session_id):
 
 
 if __name__ == "__main__":
+    project_id = os.getenv('PROJECT_ID')
+    headers = get_dialogflow_headers(project_id)
     vk_session = vk.VkApi(token=os.getenv("VK_APP_TOKEN"))
     vk_api = vk_session.get_api()
     longpoll = VkLongPoll(vk_session)
@@ -75,7 +78,7 @@ if __name__ == "__main__":
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             logging.info(f"Новое сообщение от пользователя {event.user_id}: {event.text}")
             session_id = event.user_id
-            response_from_bot = detect_intent_from_dialogflow(event.text, session_id)
+            response_from_bot = detect_intent_from_dialogflow(event.text, session_id, headers)
             if response_from_bot:
                 logging.info(f"Отправка ответа пользователю {event.user_id}")
                 echo(event, response_from_bot, vk_api)
