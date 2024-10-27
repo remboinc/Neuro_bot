@@ -11,20 +11,10 @@ async def start(update: Update, context):
 
 
 async def process_user_message(update: Update, context):
-    user_message = extract_user_message(update)
-    session_id = extract_session_id(update)
+    user_message = update.message.text
+    session_id = f"tg-{update.message.from_user.id}"
     dialogflow_response = await detect_intent_from_dialogflow(user_message, session_id)
     await send_bot_response(update, dialogflow_response)
-
-
-def extract_user_message(update: Update):
-    return update.message.text
-
-
-def extract_session_id(update: Update):
-    user_id = update.message.from_user.id
-    session_id = f"tg-{user_id}"
-    return session_id
 
 
 async def detect_intent_from_dialogflow(text, session_id):
