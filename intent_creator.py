@@ -37,14 +37,17 @@ def create_intent(project_id, token):
         )
         response.raise_for_status()
 
-        if response.status_code == 200:
-            print(f"Интент '{intent_name}' успешно создан.")
-        else:
-            print(f"Ошибка при создании интента '{intent_name}': {response.status_code} - {response.text}")
+        return intent_name
 
 
 if __name__ == '__main__':
     load_dotenv()
     project_id = os.getenv('PROJECT_ID')
     gcloud_access_token = os.getenv("GCLOUD_ACCESS_TOKEN")
-    create_intent(project_id, gcloud_access_token)
+    try:
+        intent_name = create_intent(project_id, gcloud_access_token)
+        print(f"Интент '{intent_name}' успешно создан.")
+    except requests.exceptions.HTTPError as e:
+        print(f"Ошибка при создании интента: {e}")
+
+
