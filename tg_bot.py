@@ -10,18 +10,14 @@ async def start(update: Update, context):
     await update.message.reply_text('Привет! Спроси меня что-нибудь, и я отвечу!')
 
 
-async def process_user_message(update: Update, context):
+async def process_user_message(update: Update, context, project_id):
     user_message = update.message.text
     session_id = f"tg-{update.message.from_user.id}"
-    dialogflow_response = await detect_intent_from_dialogflow(user_message, session_id)
+    dialogflow_response = await detect_intent_from_dialogflow(user_message, session_id, project_id)
     await send_bot_response(update, dialogflow_response)
 
 
-async def detect_intent_from_dialogflow(text, session_id):
-    project_id = os.getenv('PROJECT_ID')
-    if not project_id:
-        logging.error("PROJECT_ID не задан.")
-
+async def detect_intent_from_dialogflow(text, session_id, project_id):
     session_client = dialogflow.SessionsClient()
 
     logging.info(f"Запрос к Dialogflow: text='{text}', session_id='{session_id}'")
@@ -64,6 +60,10 @@ def main():
     load_dotenv()
     logging.basicConfig(level=logging.INFO)
     telegram_token = os.getenv('TELEGRAM_BOT_TOKEN')
+    project_id = os.getenv('PROJECT_ID')
+    if not project_id:
+        logging.error("PROJECT_ID не задан.")
+
     if not telegram_token:
         logging.error("TELEGRAM_BOT_TOKEN не задан.")
 
