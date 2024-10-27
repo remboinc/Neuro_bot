@@ -23,7 +23,8 @@ def extract_user_message(update: Update):
 
 def extract_session_id(update: Update):
     user_id = update.message.from_user.id
-    return str(user_id)
+    session_id = f"tg-{user_id}"
+    return session_id
 
 
 async def detect_intent_from_dialogflow(text, session_id):

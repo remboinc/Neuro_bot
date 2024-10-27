@@ -58,10 +58,10 @@ if __name__ == "__main__":
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             logging.info(f"Новое сообщение от пользователя {event.user_id}: {event.text}")
-            session_id = event.user_id
+            session_id = f'vk_{event.user_id}'
             response_from_bot = detect_intent_from_dialogflow(project_id, session_id, event.text, language_code='ru')
             if response_from_bot:
-                logging.info(f"Отправка ответа пользователю {event.user_id}")
+                logging.info(f"Отправка ответа пользователю {session_id}")
                 message_sender(event, response_from_bot, vk_api)
             else:
-                logging.info(f"Ответ пользователю {event.user_id} не отправлен (fallback intent)")
+                logging.info(f"Ответ пользователю {session_id} не отправлен (fallback intent)")
